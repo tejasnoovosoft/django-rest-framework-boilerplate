@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from user.enums import UserRole
 from user.managers import UserManager
 
 
@@ -11,6 +12,7 @@ class User(AbstractUser):
     contact_number = models.CharField(max_length=10, null=True, blank=True)
     password = models.CharField()
     username = None
+    role = models.CharField(max_length=10, choices=UserRole.choices(), default=UserRole.USER.value)
 
     objects = UserManager()
 
