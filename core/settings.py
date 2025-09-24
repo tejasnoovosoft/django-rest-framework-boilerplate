@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "user.apps.UserConfig",
     'rest_framework_simplejwt',
     "categories.apps.CategoriesConfig",
+    "social.apps.SocialConfig",
 ]
 
 MIDDLEWARE = [
