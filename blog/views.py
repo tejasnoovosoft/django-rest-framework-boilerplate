@@ -15,12 +15,17 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
 
-        queryset = Post.objects.select_related('author').prefetch_related(Prefetch(
-            'comment_set',
-            queryset=Comment.objects.select_related('user').order_by('-created_at')
-        )
-        ).annotate(
-            likes_count=Count('like', distinct=True)
+        queryset = (
+            Post.objects.select_related("author")
+            .prefetch_related(
+                Prefetch(
+                    "comment_set",
+                    queryset=Comment.objects.select_related("user").order_by(
+                        "-created_at"
+                    ),
+                )
+            )
+            .annotate(likes_count=Count("like", distinct=True))
         )
 
         if self.request.user.role == UserRole.ADMIN.value:

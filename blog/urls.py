@@ -4,6 +4,6 @@ from blog.views import PostViewSet
 
 router = DefaultRouter()
 
-router.register('posts', PostViewSet, basename='posts')
+router.register("posts", PostViewSet, basename="posts")
 
 urlpatterns = router.urls

@@ -12,9 +12,11 @@ class User(AbstractUser):
     contact_number = models.CharField(max_length=10, null=True, blank=True)
     password = models.CharField()
     username = None
-    role = models.CharField(max_length=10, choices=UserRole.choices(), default=UserRole.USER.value)
+    role = models.CharField(
+        max_length=10, choices=UserRole.choices(), default=UserRole.USER.value
+    )
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name']
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["first_name", "last_name"]

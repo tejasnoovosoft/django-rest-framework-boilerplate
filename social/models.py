@@ -14,7 +14,7 @@ class PostInteractionBase(models.Model):
 
 class Like(PostInteractionBase):
     class Meta:
-        unique_together = ('post', 'user')
+        unique_together = ("post", "user")
         verbose_name = "Like"
         verbose_name_plural = "Likes"
 
@@ -23,6 +23,6 @@ class Comment(PostInteractionBase):
     comment = models.TextField()
 
     class Meta:
-        ordering = ('-created_at',)
+        ordering = ("-created_at",)
         verbose_name = "Comment"
         verbose_name_plural = "Comments"

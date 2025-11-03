@@ -10,15 +10,20 @@ def set_superuser_role(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('user', '0002_user_contact_number'),
+        ("user", "0002_user_contact_number"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='role',
-            field=models.CharField(choices=[('admin', 'Admin'), ('user', 'User')], default='user', max_length=10),
+            model_name="user",
+            name="role",
+            field=models.CharField(
+                choices=[("admin", "Admin"), ("user", "User")],
+                default="user",
+                max_length=10,
+            ),
         ),
-
-        migrations.RunPython(set_superuser_role, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(
+            set_superuser_role, reverse_code=migrations.RunPython.noop
+        ),
     ]
