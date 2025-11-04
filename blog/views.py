@@ -1,6 +1,7 @@
 from django.db.models import Count, Prefetch
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
+from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 
 from blog.models import Post
@@ -12,8 +13,10 @@ from user.enums import UserRole
 class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ["category"]
+
+    search_fields = ["title", "content", "category__name"]
 
     def get_serializer_class(self):
         if self.action in ["create", "update", "partial_update"]:
