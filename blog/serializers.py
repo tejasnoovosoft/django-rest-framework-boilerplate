@@ -16,5 +16,5 @@ class PostSerializer(serializers.ModelSerializer):
         read_only_fields = ["author", "created_at"]
 
     def get_comments(self, post):
-        comments = post.comment_set.all()
+        comments = post.comments.all()
         return CommentSerializer(comments, many=True).data

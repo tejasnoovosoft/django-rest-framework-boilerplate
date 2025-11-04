@@ -19,13 +19,13 @@ class PostViewSet(viewsets.ModelViewSet):
             Post.objects.select_related("author")
             .prefetch_related(
                 Prefetch(
-                    "comment_set",
+                    "comments",
                     queryset=Comment.objects.select_related("user").order_by(
                         "-created_at"
                     ),
                 )
             )
-            .annotate(likes_count=Count("like", distinct=True))
+            .annotate(likes_count=Count("likes", distinct=True))
         )
 
         if self.request.user.role == UserRole.ADMIN.value:
