@@ -3,7 +3,7 @@ from rest_framework import viewsets, request
 from rest_framework.permissions import IsAuthenticated
 
 from blog.models import Post
-from blog.serializers import PostSerializer
+from blog.serializers import PostWriteSerializer, PostReadSerializer
 from social.models import Comment
 from user.enums import UserRole
 
@@ -11,12 +11,14 @@ from user.enums import UserRole
 class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
-    serializer_class = PostSerializer
+    def get_serializer_class(self):
+        if self.action in ["create", "update", "partial_update"]:
+            return PostWriteSerializer
+        return PostReadSerializer
 
     def get_queryset(self):
-
         queryset = (
-            Post.objects.select_related("author")
+            Post.objects.select_related("author", "category")
             .prefetch_related(
                 Prefetch(
                     "comments",
