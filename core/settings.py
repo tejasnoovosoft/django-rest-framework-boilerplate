@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "categories.apps.CategoriesConfig",
     "social.apps.SocialConfig",
     "silk",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -138,7 +139,8 @@ CORS_ALLOW_CREDENTIALS = True
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ]
+    ],
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
 }
 
 SIMPLE_JWT = {
