@@ -1,8 +1,14 @@
 from rest_framework import status
+from rest_framework.generics import RetrieveAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from user.serializers import LoginSerializer, RegisterSerializer
+from user.serializers import (
+    LoginSerializer,
+    RegisterSerializer,
+    UserDetailsSerializer,
+)
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -62,3 +68,11 @@ class RegisterView(APIView):
             },
             status=status.HTTP_201_CREATED,
         )
+
+
+class UserDetailView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserDetailsSerializer
+
+    def get_object(self):
+        return self.request.user
