@@ -27,3 +27,19 @@ class Comment(PostInteractionBase):
         ordering = ("-created_at",)
         verbose_name = "Comment"
         verbose_name_plural = "Comments"
+
+
+class Follow(models.Model):
+    follower = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="followers"
+    )
+    following = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="following"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+        verbose_name = "Follow"
+        verbose_name_plural = "Follows"
+        unique_together = ("follower", "following")
