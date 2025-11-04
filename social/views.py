@@ -1,12 +1,16 @@
 from rest_framework import status, viewsets, serializers
-from rest_framework.generics import get_object_or_404
+from rest_framework.generics import get_object_or_404, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from blog.models import Post
 from social.models import Like, Comment, Follow
-from social.serializers import CommentSerializer
+from social.serializers import (
+    CommentSerializer,
+    FollowingSerializer,
+    FollowersSerializer,
+)
 from user.models import User
 
 
@@ -85,3 +89,27 @@ class ToggleFollowAPIView(APIView):
             {"message": f"Following {following.first_name} {following.last_name}"},
             status=status.HTTP_201_CREATED,
         )
+
+
+class BaseFollowListAPIView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    order_by = "-created_at"
+    related_field = None
+
+    def get_queryset(self):
+        assert self.related_field, "related_field must be defined"
+        return (
+            Follow.objects.filter(**{self.related_field: self.request.user})
+            .select_related(self.related_field)
+            .order_by(self.order_by)
+        )
+
+
+class FollowingListAPIView(BaseFollowListAPIView):
+    serializer_class = FollowingSerializer
+    related_field = "follower"
+
+
+class FollowerListAPIView(BaseFollowListAPIView):
+    serializer_class = FollowersSerializer
+    related_field = "following"
