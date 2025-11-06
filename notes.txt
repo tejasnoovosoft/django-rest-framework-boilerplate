@@ -1,0 +1,7 @@
+# REQUEST
+ - request.data -> We can access a req body
+ - request.query_params -> We can access a query params
+ - request.user -> Typically returns an instance of django.contrib.auth.models.User, although the behavior depends on the authentication policy being used.
+ - request.method -> Returns the uppercased string representation of the request's HTTP method.
+
+# .is_valid() should NOT be used when serializing existing model instances — it's only for input validation
