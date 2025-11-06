@@ -1,9 +1,11 @@
+from django.db.models import Count
 from rest_framework import status
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from user.models import User
 from user.serializers import (
     LoginSerializer,
     RegisterSerializer,
@@ -74,5 +76,11 @@ class UserDetailView(RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserDetailsSerializer
 
+    def get_queryset(self):
+        return User.objects.filter(id=self.request.user.id).annotate(
+            followers_count=Count("followers", distinct=True),
+            following_count=Count("following", distinct=True),
+        )
+
     def get_object(self):
-        return self.request.user
+        return self.get_queryset().first()

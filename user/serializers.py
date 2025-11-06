@@ -32,6 +32,9 @@ class UserBasicDetailsSerializer(serializers.ModelSerializer):
 
 
 class UserDetailsSerializer(serializers.ModelSerializer):
+    followers = serializers.IntegerField(source="followers_count", read_only=True)
+    following = serializers.IntegerField(source="following_count", read_only=True)
+
     class Meta:
         model = User
         exclude = ("password", "user_permissions", "groups")
