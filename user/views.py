@@ -1,6 +1,7 @@
 from django.db.models import Count
 from rest_framework import status
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.exceptions import MethodNotAllowed
+from rest_framework.generics import RetrieveAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,7 +10,8 @@ from user.models import User
 from user.serializers import (
     LoginSerializer,
     RegisterSerializer,
-    UserDetailsSerializer,
+    UserDetailsReadSerializer,
+    UserDetailsWriteSerializer,
 )
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -72,15 +74,28 @@ class RegisterView(APIView):
         )
 
 
-class UserDetailView(RetrieveAPIView):
+class UserDetailView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = UserDetailsSerializer
 
     def get_queryset(self):
-        return User.objects.filter(id=self.request.user.id).annotate(
-            followers_count=Count("followers", distinct=True),
-            following_count=Count("following", distinct=True),
-        )
+        queryset = User.objects.filter(id=self.request.user.id)
+
+        if self.request.method == "GET":
+            queryset = queryset.annotate(
+                followers_count=Count("followers", distinct=True),
+                following_count=Count("following", distinct=True),
+            )
+        return queryset
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return UserDetailsReadSerializer
+        return UserDetailsWriteSerializer
 
     def get_object(self):
-        return self.get_queryset().first()
+        return self.get_queryset().get(id=self.request.user.id)
+
+    def update(self, request, *args, **kwargs):
+        if request.method == "PUT":
+            raise MethodNotAllowed("PUT")
+        return super().update(request, *args, **kwargs)

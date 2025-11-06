@@ -31,10 +31,16 @@ class UserBasicDetailsSerializer(serializers.ModelSerializer):
         fields = ("email", "first_name", "last_name", "id", "bio")
 
 
-class UserDetailsSerializer(serializers.ModelSerializer):
+class UserDetailsReadSerializer(serializers.ModelSerializer):
     followers = serializers.IntegerField(source="followers_count", read_only=True)
     following = serializers.IntegerField(source="following_count", read_only=True)
 
     class Meta:
         model = User
         exclude = ("password", "user_permissions", "groups")
+
+
+class UserDetailsWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("email", "first_name", "last_name", "bio")
