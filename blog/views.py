@@ -1,6 +1,6 @@
 from django.db.models import Count, Prefetch
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 
@@ -44,3 +44,21 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+class BlogsFeedViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PostReadSerializer
+
+    def get_queryset(self):
+        following_user_ids = self.request.user.following.values_list(
+            "following_id", flat=True
+        )
+
+        return (
+            Post.objects.filter(author_id__in=following_user_ids)
+            .select_related("author", "category")
+            .prefetch_related("comments")
+            .order_by("-created_at")
+            .annotate(likes_count=Count("likes", distinct=True))
+        )
