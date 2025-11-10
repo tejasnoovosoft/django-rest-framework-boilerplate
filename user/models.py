@@ -18,7 +18,7 @@ class User(AbstractUser):
     )
     bio = models.TextField(null=True, blank=True)
 
-    profile_picture = CloudinaryField("image", null=True, blank=True)
+    profile_picture = models.URLField(max_length=500, null=True, blank=True)
 
     objects = UserManager()
 

@@ -1,3 +1,4 @@
+import cloudinary.uploader
 from rest_framework import serializers
 
 from user.models import User
@@ -10,6 +11,7 @@ class LoginSerializer(serializers.Serializer):
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    profile_picture = serializers.ImageField(required=False, allow_null=True)
 
     class Meta:
         model = User
@@ -23,7 +25,24 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
+        profile_picture = validated_data.pop("profile_picture", None)
+
+        # Create user without profile picture first
+        user = User.objects.create_user(**validated_data)
+
+        # Upload to Cloudinary if profile picture provided
+        if profile_picture:
+            upload_result = cloudinary.uploader.upload(
+                profile_picture,
+                folder="profile_pictures",
+                public_id=f"user_{user.id}",
+                overwrite=True,
+                resource_type="image",
+            )
+            user.profile_picture = upload_result["secure_url"]
+            user.save()
+
+        return user
 
 
 class UserSerializer(serializers.ModelSerializer):
