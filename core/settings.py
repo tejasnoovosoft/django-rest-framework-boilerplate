@@ -12,9 +12,15 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from datetime import timedelta
 from pathlib import Path
+import os
+import cloudinary
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file
+load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -45,6 +51,8 @@ INSTALLED_APPS = [
     "social.apps.SocialConfig",
     "silk",
     "django_filters",
+    "cloudinary",
+    "cloudinary_storage",
 ]
 
 MIDDLEWARE = [
@@ -84,11 +92,11 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "drf_db",
-        "USER": "drf_user",
-        "PASSWORD": "drf_password",
-        "HOST": "db",
-        "PORT": 5432,
+        "NAME": os.environ.get("POSTGRES_DB", default="drf_db"),
+        "USER": os.environ.get("POSTGRES_USER", default="drf_user"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", default="drf_password"),
+        "HOST": os.environ.get("POSTGRES_HOST", default="db"),
+        "PORT": os.environ.get("POSTGRES_PORT", default="5432"),
     }
 }
 
@@ -150,3 +158,23 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=15),
 }
+
+# Cloudinary configuration
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    "API_KEY": os.environ.get("CLOUDINARY_API_KEY"),
+    "API_SECRET": os.environ.get("CLOUDINARY_API_SECRET"),
+}
+
+# Configure cloudinary
+cloudinary.config(
+    cloud_name=CLOUDINARY_STORAGE["CLOUD_NAME"],
+    api_key=CLOUDINARY_STORAGE["API_KEY"],
+    api_secret=CLOUDINARY_STORAGE["API_SECRET"],
+    secure=True,
+)
+
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+STATICFILES_STORAGE = "cloudinary_storage.storage.StaticCloudinaryStorage"
+
+MEDIA_URL = "/media/"

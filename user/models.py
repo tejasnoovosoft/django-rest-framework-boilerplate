@@ -1,3 +1,4 @@
+from cloudinary.models import CloudinaryField
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -16,6 +17,8 @@ class User(AbstractUser):
         max_length=10, choices=UserRole.choices(), default=UserRole.USER.value
     )
     bio = models.TextField(null=True, blank=True)
+
+    profile_picture = CloudinaryField("image", null=True, blank=True)
 
     objects = UserManager()
 
