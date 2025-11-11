@@ -9,3 +9,4 @@ django-cloudinary-storage
 python-dotenv
 Pillow>=10.0.0
 pytest-django
+django-environ

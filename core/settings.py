@@ -14,22 +14,24 @@ from datetime import timedelta
 from pathlib import Path
 import os
 import cloudinary
-from dotenv import load_dotenv
+import environ
+
+env = environ.Env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load environment variables from .env file
-load_dotenv(os.path.join(BASE_DIR, ".env"))
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-l)10-qf5b_8&jzyfoflf&m$i0_9(%28tn0xtl6&9$%o0wii*b8"
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG")
 
 ALLOWED_HOSTS = ["*"]
 
@@ -92,11 +94,11 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_DB", default="drf_db"),
-        "USER": os.environ.get("POSTGRES_USER", default="drf_user"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", default="drf_password"),
-        "HOST": os.environ.get("POSTGRES_HOST", default="db"),
-        "PORT": os.environ.get("POSTGRES_PORT", default="5432"),
+        "NAME": env("POSTGRES_DB", default="drf_db"),
+        "USER": env("POSTGRES_USER", default="drf_user"),
+        "PASSWORD": env("POSTGRES_PASSWORD", default="drf_password"),
+        "HOST": env("POSTGRES_HOST", default="db"),
+        "PORT": env("POSTGRES_PORT", default="5432"),
     }
 }
 
@@ -161,9 +163,9 @@ SIMPLE_JWT = {
 
 # Cloudinary configuration
 CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME"),
-    "API_KEY": os.environ.get("CLOUDINARY_API_KEY"),
-    "API_SECRET": os.environ.get("CLOUDINARY_API_SECRET"),
+    "CLOUD_NAME": env("CLOUDINARY_CLOUD_NAME"),
+    "API_KEY": env("CLOUDINARY_API_KEY"),
+    "API_SECRET": env("CLOUDINARY_API_SECRET"),
 }
 
 # Configure cloudinary
