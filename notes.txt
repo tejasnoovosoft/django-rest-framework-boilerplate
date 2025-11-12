@@ -8,3 +8,34 @@
 
 # Models
  - db_table used to rename table name.
+ - Null is purely database-related, whereas blank is validation-related. If a field has blank=True, form validation will allow entry of an empty value. If a field has blank=False, the field will be required.
+ - If both db_default and Field.default are set, default will take precedence when creating instances in Python code. db_default will still be set at the database level and will be used when inserting rows outside of the ORM or when adding a new field in a migration.
+ - ordering = ["horn_length"]
+ - ordering = [F("author").asc(nulls_last=True)]: To order by author ascending and make null values sort last
+ - An index is like a shortcut or a bookmark in your database that helps it find data faster — just like an index in a book helps you quickly jump to a topic instead of reading every page.
+ - unique_together: best example is follow and following on instagram
+ - Abstract models: if in meta class we defined abstract= true then table will not create for abstract model
+
+ /**
+
+ INDEX
+
+ Now you often search customers by their first name or last name, for example:
+ SELECT * FROM customer WHERE last_name = 'Tejas'
+
+ Without an index, the database must check every row one by one (called a full table scan)
+ → That’s slow.
+
+ With an index on last_name, the database has a pre-sorted list internally
+ → It can directly jump to 'Tejas' without scanning all rows 🚀
+
+ class Meta:
+    indexes = [
+        models.Index(fields=["last_name", "first_name"]),
+        models.Index(fields=["first_name"], name="first_name_idx"),
+    ]
+
+ models.Index(fields=["last_name", "first_name"]) -> This index helps when you query using both fields together
+ models.Index(fields=["first_name"], name="first_name_idx") -> This one is only for queries
+
+ **\
