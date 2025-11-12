@@ -5,3 +5,6 @@
  - request.method -> Returns the uppercased string representation of the request's HTTP method.
 
 # .is_valid() should NOT be used when serializing existing model instances — it's only for input validation
+
+# Models
+ - db_table used to rename table name.
